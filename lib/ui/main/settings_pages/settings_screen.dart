@@ -95,6 +95,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             buildSizedBoxH(5),
+            ///add comments
             GestureDetector(
               onTap: () {},
               child: Container(
