@@ -46,6 +46,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                   ),
                 ),
                 buildSizedBoxW( width * 0.29),
+
                 const Text(
                   AppString.favourites,
                   style: white20,

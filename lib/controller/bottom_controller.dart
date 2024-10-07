@@ -23,7 +23,6 @@ class BottomController extends GetxController {
 
   int selectedPage = 0;
   // int selectedPage = 0;
-  // int selectedPage = 0;
   String userName = '';
 
   void setUserName(String name) {
