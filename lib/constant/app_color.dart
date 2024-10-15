@@ -13,8 +13,8 @@ const Color starColor = Color(0xffFFC61D);
 const Color darkYellow = Color(0xffD8BC50);
 const Color lightYellow = Color(0xffFFDD95);
 const Color yellowColor = Color(0xffFEE3B2);
-const Color goldenColor = Color(0xffACAA96);
 const Color redColor = Color(0xffDC5C5C);
+const Color red = Colors.red;
 const Color rateColor = Color(0xff532B00);
 const Color greenColor = Color(0xff32D568);
 

@@ -2,23 +2,25 @@ import 'package:aniwatch_tv/constant/app_assets.dart';
 import 'package:aniwatch_tv/constant/app_color.dart';
 import 'package:aniwatch_tv/constant/app_string.dart';
 import 'package:aniwatch_tv/constant/app_textstyle.dart';
+import 'package:aniwatch_tv/constant/routes.dart';
 import 'package:aniwatch_tv/controller/ads_controller.dart';
 import 'package:aniwatch_tv/controller/bottom_controller.dart';
 import 'package:aniwatch_tv/controller/fav_controller.dart';
+import 'package:aniwatch_tv/controller/home_controller.dart';
 import 'package:aniwatch_tv/ui/main/settings_pages/common_widgets.dart';
 import 'package:aniwatch_tv/ui/main/settings_pages/gradient_text.dart';
+import 'package:aniwatch_tv/ui/main/widget/app_bar.dart';
 import 'package:aniwatch_tv/ui/main/widget/grid_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import '../../../controller/home_controller.dart';
-import '../widget/app_bar.dart';
+
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key, required this.name}) : super(key: key);
-  final String name;
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -34,13 +36,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    favController.getFavData();
-    homeController.getTopAnime();
-    homeController.getUpcomingAnime();
-    adsController.loadBannerAds();
-    adsController.loadInterstitialAds();
+   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+     favController.getFavData();
+     homeController.getTopAnime();
+     homeController.getUpcomingAnime();
+     adsController.loadBannerAds();
+     adsController.loadInterstitialAds();
+   },);
 
     /// adsController.showAdd();
+    ///
 
     // TODO: implement initState
     super.initState();
@@ -52,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: black,
       appBar: CustomAppBar(
-        height: 130,
+        height: MediaQuery.of(context).size.height * 0.17,
         child: Column(
           children: [
             const Spacer(),
@@ -97,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         buildSizedBoxH( size.height * 0.02),
                         Text(
-                          "Hello ${box.read("name")}!",
+                          "Hello ${box.read("name") ?? ''}!",
                           style: whiteColor27,
                         ),
                         const Text(
@@ -138,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         buildSizedBoxH(size.height * 0.02),
                         controller.loading
-                            ? const Center(child: CircularProgressIndicator())
+                            ? const Center(child: CircularProgressIndicator(color: lightYellow,))
                             : controller.searchController.text == ""
                                 ? Column(
                                     children: [
@@ -154,9 +159,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                             const Spacer(),
                                             GestureDetector(
                                               onTap: () {
-                                                controller.setScreenIndex(0);
-                                                bottomController
-                                                    .navigateToSeeAll();
+                                                // controller.setScreenIndex(0);
+                                                // PersistentNavBarNavigator.pushNewScreen(
+                                                //   context,
+                                                //   screen:  SeeAllScreen(),
+                                                //   withNavBar: true,
+                                                //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                                                // );
+                                                context.pushNamed(Routes.seeAllName);
+
                                               },
                                               child: const Text(
                                                 AppString.seeAll,
@@ -189,20 +200,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 scrollDirection:
                                                     Axis.horizontal,
                                                 itemBuilder: (context, index) {
+                                                  print("Data${controller.newTop.toString()}");
                                                   return Row(
                                                     children: [
                                                       GestureDetector(
                                                         onTap: () {
-                                                          bottomController
-                                                              .navigateToDetailsScreen(
-                                                                  controller
-                                                                          .newTop[
-                                                                      index],
-                                                                  false);
+                                                          // bottomController
+                                                          //     .navigateToDetailsScreen(controller.newTop[index],
+                                                          //         false);
+                                                          // PersistentNavBarNavigator.pushNewScreen(
+                                                          //   context,
+                                                          //   screen: AnimeDetailScreen(data: controller.newTop[index],),
+                                                          //   withNavBar: true,
+                                                          //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                                                          // );
+                                                          context.pushNamed(Routes.animeDetailName,extra: controller.newTop[index]);
                                                           adsController
                                                               .showAdd();
-                                                          adsController
-                                                              .loadBannerAds();
+                                                          // adsController
+                                                          //     .loadBannerAds();
                                                         },
                                                         child: Stack(
                                                           children: [
@@ -307,8 +323,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                             GestureDetector(
                                               onTap: () {
                                                 controller.setScreenIndex(1);
-                                                bottomController
-                                                    .navigateToSeeAll();
+                                                // bottomController
+                                                //     .navigateToSeeAll();
+                                                // PersistentNavBarNavigator.pushNewScreen(
+                                                //   context,
+                                                //   screen:  SeeAllScreen(),
+                                                //   withNavBar: true,
+                                                //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                                                // );
+                                                context.pushNamed(Routes.seeAllName);
                                               },
                                               child: const Text(
                                                 AppString.seeAll,
@@ -350,15 +373,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           children: [
                                                             GestureDetector(
                                                               onTap: () {
-                                                                bottomController
-                                                                    .navigateToDetailsScreen(
-                                                                        controller
-                                                                            .newUpcoming[index],
-                                                                        false);
+                                                                // bottomController
+                                                                //     .navigateToDetailsScreen(
+                                                                //         controller
+                                                                //             .newUpcoming[index],
+                                                                //         false);
+
+                                                                // PersistentNavBarNavigator.pushNewScreen(
+                                                                //   context,
+                                                                //   screen: AnimeDetailScreen(data: controller.newUpcoming[index],),
+                                                                //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                                                                //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                                                                // );
+                                                                context.pushNamed(Routes.animeDetailName,extra: controller.newUpcoming[index]);
                                                                 adsController
                                                                     .showAdd();
-                                                                adsController
-                                                                    .loadBannerAds();
+                                                                // adsController
+                                                                //     .loadBannerAds();
                                                               },
                                                               child: Stack(
                                                                 children: [
@@ -457,8 +488,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                             GestureDetector(
                                               onTap: () {
                                                 controller.setScreenIndex(2);
-                                                bottomController
-                                                    .navigateToSeeAll();
+                                                // bottomController
+                                                //     .navigateToSeeAll();
+                                                // PersistentNavBarNavigator.pushNewScreen(
+                                                //   context,
+                                                //   screen:  SeeAllScreen(),
+                                                //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                                                //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                                                // );
+                                                context.pushNamed(Routes.seeAllName);
                                               },
                                               child: Row(
                                                 children: [
@@ -508,15 +546,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           children: [
                                                             GestureDetector(
                                                               onTap: () {
-                                                                bottomController
-                                                                    .navigateToDetailsScreen(
-                                                                        favController
-                                                                            .favData[index],
-                                                                        false);
+                                                                // bottomController
+                                                                //     .navigateToDetailsScreen(
+                                                                //         favController
+                                                                //             .favData[index],
+                                                                //         false);
+                                                                // PersistentNavBarNavigator.pushNewScreen(
+                                                                //   context,
+                                                                //   screen: AnimeDetailScreen(data: favController.favData[index]),
+                                                                //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                                                                //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                                                                // );
+                                                                context.pushNamed(Routes.animeDetailName,extra: favController.favData[index]);
                                                                 adsController
                                                                     .showAdd();
-                                                                adsController
-                                                                    .loadBannerAds();
+                                                                    // adsController
+                                                                    //     .loadBannerAds();
                                                               },
                                                               child: Stack(
                                                                 children: [
@@ -574,7 +619,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                                 20,
                                                                           ),
                                                                           Text(
-                                                                            '${favController.favData[index]['averageScore'] == null ? 0.0 : (favController.favData[index]['averageScore'] * 0.1)..toStringAsFixed(1)}',
+                                                                            '${favController.favData[index]['averageScore'] == null ? 0.0 : (favController.favData[index]['averageScore'] * 0.1).toStringAsFixed(1)}',
                                                                             style:
                                                                                 white16,
                                                                           ),
@@ -611,24 +656,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                           style: whiteColor,
                                         ),
                                       )
-                                    : buildGridView(controller.searchData, size.width, size.height),
+                                    :  CustomGrid(allData: controller.searchData,),
                       ],
                     ),
                   ),
                 ),
                 GetBuilder<AdsController>(builder: (controller) {
-                  if (controller.bannerAd == null) {
+                  if (controller.bannerAd1 == null) {
                     return const SizedBox();
                   } else {
                     return Align(
                       alignment: Alignment.bottomCenter,
                       child: Container(
                         alignment: Alignment.bottomCenter,
-                        padding: EdgeInsets.only(top: 3,left: 8,right: 8),
+                        padding: const EdgeInsets.only(top: 3,left: 8,right: 8),
                         decoration: const BoxDecoration(color: black),
                         width: size.width,
                         height: size.height*0.10,
-                        child: AdWidget(ad: controller.bannerAd!),
+                        child: AdWidget(ad: controller.bannerAd1!),
                       ),
                     );
                   }

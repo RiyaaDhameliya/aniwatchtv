@@ -1,24 +1,29 @@
 import 'dart:developer';
 import 'package:aniwatch_tv/constant/app_color.dart';
 import 'package:aniwatch_tv/constant/app_textstyle.dart';
+import 'package:aniwatch_tv/constant/routes.dart';
 import 'package:aniwatch_tv/controller/bottom_controller.dart';
 import 'package:aniwatch_tv/controller/fav_controller.dart';
 import 'package:aniwatch_tv/controller/home_controller.dart';
+import 'package:aniwatch_tv/ui/main/home_pages/video_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import '../../../constant/app_assets.dart';
 import '../../../constant/app_string.dart';
+import '../../../constant/text_wrapper.dart';
 import '../../../controller/ads_controller.dart';
 import '../settings_pages/common_widgets.dart';
 import '../widget/app_bar.dart';
 
+
 class AnimeDetailScreen extends StatefulWidget {
-  const AnimeDetailScreen({super.key, required this.data, required this.from});
+  const AnimeDetailScreen({super.key, required this.data});
 
   final Map<String, dynamic> data;
-  final bool from;
 
   @override
   State<AnimeDetailScreen> createState() => _AnimeDetailScreenState();
@@ -33,14 +38,14 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
 
   @override
   void initState() {
-    getDemographic();
+    // getDemographic();
     homeController.getTopAnime();
     homeController.getUpcomingAnime();
     // TODO: implement initState
     super.initState();
   }
 
-  getDemographic() {
+/*  getDemographic() {
 
     if(widget.data['staff']['pageInfo'] !=null){
       members = widget.data['staff']['pageInfo']['total'];
@@ -56,7 +61,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
         setState(() {});
       }
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -65,14 +70,15 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
     return Scaffold(
         backgroundColor: black,
         appBar: CustomAppBar(
-          height: 85,
+          height: MediaQuery.of(context).size.height * 0.10,
           child: Padding(
-            padding: const EdgeInsets.only(left: 15, top: 40),
+            padding: const EdgeInsets.only(left: 15, top: 20),
             child: Row(
-              children: [
+              children: <Widget>[
                 GestureDetector(
                   onTap: () {
-                    bottomController.getBack(widget.from);
+                    // bottomController.getBack(widget.from);
+                    Navigator.pop(context);
                   },
                   child: const Icon(
                     Icons.arrow_back_ios,
@@ -203,13 +209,38 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
                           onTap: () {
                             log("DATA ${widget.data['trailer']}");
 
-                            bottomController.navigateToVideoScreen(
-                                widget.data['trailer'] == null
+                            // bottomController.navigateToVideoScreen(
+                            //     widget.data['trailer'] == null
+                            //         ? ""
+                            //         : widget.data['trailer']['id'],
+                            //     widget.data['trailer'] == null
+                            //         ? ""
+                            //         : widget.data['trailer']['thumbnail']);
+
+                            // PersistentNavBarNavigator.pushNewScreen(
+                            //   context,
+                            //    screen: VideoScreen(
+                            //     id: widget.data['trailer'] == null
+                            //       ? ""
+                            //       : widget.data['trailer']['id'],       thumbnail: widget.data['trailer'] == null
+                            //       ? ""
+                            //       : widget.data['trailer']['thumbnail'],
+                            //
+                            //   ),
+                            //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                            // );
+
+
+                            context.pushNamed(Routes.videoName,extra: {
+                              'id': widget.data['trailer'] == null
                                     ? ""
                                     : widget.data['trailer']['id'],
-                                widget.data['trailer'] == null
+                              'thumbnail':widget.data['trailer'] == null
                                     ? ""
-                                    : widget.data['trailer']['thumbnail']);
+                                    : widget.data['trailer']['thumbnail']
+
+                            } );
+
                           },
                           child: Container(
                             height: size.height * 0.065,
@@ -442,7 +473,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
                         buildSizedBoxH(size.height * 0.01),
 
                         Container(
-                          height: size.height * 0.128,
+                          height: size.height * 0.132,
                           width: size.width * 0.9,
                           decoration: BoxDecoration(
                             color: blackColor.withOpacity(0.7),
@@ -540,7 +571,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
   }
 }
 
-class TextWrapper extends StatefulWidget {
+/*class TextWrapper extends StatefulWidget {
   const TextWrapper({super.key, required this.text});
 
   final String text;
@@ -591,6 +622,6 @@ class _TextWrapperState extends State<TextWrapper>
             )
     ]);
   }
-}
+}*/
 
 

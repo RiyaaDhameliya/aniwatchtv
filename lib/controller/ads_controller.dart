@@ -8,6 +8,10 @@ class AdsController extends GetxController{
   GetStorage box = GetStorage();
 
   BannerAd? bannerAd;
+  BannerAd? bannerAd1;
+  BannerAd? bannerAd2;
+  BannerAd? bannerAd3;
+  BannerAd? bannerAd4;
 
   late InterstitialAd interstitialAd;
 
@@ -20,6 +24,66 @@ class AdsController extends GetxController{
         onAdLoaded: (ad) {
             bannerAd = ad as BannerAd;
             update();
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          bannerAd1 = ad as BannerAd;
+          update();
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          bannerAd2 = ad as BannerAd;
+          update();
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          bannerAd3 = ad as BannerAd;
+          update();
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          bannerAd4 = ad as BannerAd;
+          update();
         },
         onAdFailedToLoad: (ad, err) {
           print('Failed to load a banner ad: ${err.message}');
@@ -54,5 +118,6 @@ class AdsController extends GetxController{
       box.write("addValue", value);
     }
   }
-
 }
+
+

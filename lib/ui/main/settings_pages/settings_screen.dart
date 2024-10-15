@@ -1,17 +1,21 @@
 import 'dart:developer';
+import 'package:aniwatch_tv/constant/app_string.dart';
 import 'package:aniwatch_tv/constant/app_textstyle.dart';
-import 'package:aniwatch_tv/ui/main/favorite_screen/fav_screen.dart';
+import 'package:aniwatch_tv/constant/routes.dart';
+import 'package:aniwatch_tv/controller/bottom_controller.dart';
 import 'package:aniwatch_tv/ui/main/settings_pages/privacy_policy_screen.dart';
 import 'package:aniwatch_tv/ui/main/widget/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:aniwatch_tv/constant/app_color.dart';
+import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../constant/app_string.dart';
 import 'common_widgets.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -32,6 +36,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  BottomController bottomController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -39,13 +45,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       backgroundColor: black,
       appBar: CustomAppBar(
-        height: 130,
+        height: MediaQuery.of(context).size.height * 0.17,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Spacer(),
             const Padding(
-              padding: EdgeInsets.only(left: 15, top: 50),
+              padding: EdgeInsets.only(left: 15, top: 40,bottom: 15),
               child: Text(
                 AppString.setting,
                 style: white30,
@@ -63,11 +69,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
             buildSizedBoxH(14),
             GestureDetector(
               onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const FavouriteScreen(),
-                    ));
+                // bottomController.navigateToFavScreen();
+                // PersistentNavBarNavigator.pushNewScreen(
+                //   context,
+                //   screen:  const FavouriteScreen(),
+                //   withNavBar: true, // OPTIONAL VALUE. True by default.
+                //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
+                // );
+                context.pushNamed(Routes.favouriteName);
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (context) => const FavouriteScreen(),
+                //     ));
               },
               child: Container(
                 height: size.height*0.07,

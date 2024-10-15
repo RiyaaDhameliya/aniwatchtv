@@ -1,18 +1,23 @@
+import 'package:aniwatch_tv/constant/app_color.dart';
+import 'package:aniwatch_tv/constant/app_string.dart';
 import 'package:aniwatch_tv/constant/app_textstyle.dart';
+import 'package:aniwatch_tv/controller/ads_controller.dart';
+import 'package:aniwatch_tv/controller/bottom_controller.dart';
+import 'package:aniwatch_tv/controller/fav_controller.dart';
 import 'package:aniwatch_tv/controller/home_controller.dart';
 import 'package:aniwatch_tv/ui/main/settings_pages/common_widgets.dart';
+import 'package:aniwatch_tv/ui/main/widget/app_bar.dart';
 import 'package:aniwatch_tv/ui/main/widget/grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../constant/app_color.dart';
-import '../../../constant/app_string.dart';
-import '../../../controller/ads_controller.dart';
-import '../../../controller/bottom_controller.dart';
-import '../../../controller/fav_controller.dart';
-import '../widget/app_bar.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 
 class SeeAllScreen extends StatefulWidget {
   const SeeAllScreen({super.key});
+  // final Function(bool value) callBack;
+
 
   @override
   State<SeeAllScreen> createState() => _SeeAllScreenState();
@@ -32,21 +37,21 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
         backgroundColor: black,
         appBar: CustomAppBar(
-          height: 85,
+          height: MediaQuery.of(context).size.height * 0.12,
           child: Padding(
-            padding: const EdgeInsets.only(left: 15, top: 40),
+            padding: const EdgeInsets.only(left: 15, top: 30,bottom: 20),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
                   onTap: () {
-                    bottomController.getBack(false);
+                    // bottomController.getBack(false);
+                   context.pop();
                   },
                   child: const Icon(
                     Icons.arrow_back_ios,
@@ -79,29 +84,47 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
               return SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Column(
+                  child: Stack(
                     children: [
-                      Expanded(
-                        child: GetBuilder<HomeController>(
-                          builder: (controller) {
-                            if (controller.loading) {
-                              return const Center(
-                                  child: CircularProgressIndicator(
-                                color: lightYellow,
-                              ));
-                            } else {
-                              return SingleChildScrollView(
-                                controller: controller.scrollController,
-                                child: Column(
-                                  children: [
-                                    buildGridView(controller.allData, width, height),
-                                  ],
-                                ),
-                              );
-                            }
-                          },
-                        ),
+                      Column(
+                        children: [
+                          Expanded(
+                            child: GetBuilder<HomeController>(
+                              builder: (controller) {
+                                if (controller.loading) {
+                                  return const Center(
+                                      child: CircularProgressIndicator(
+                                    color: lightYellow,
+                                  ));
+                                } else {
+                                  return SingleChildScrollView(
+                                    controller: controller.scrollController,
+                                    child: Column(
+                                      children: [
+                                        CustomGrid(allData: controller.allData,),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                       ),
+                      GetBuilder<AdsController>(builder: (controller) {
+                        if (controller.bannerAd2 == null) {
+                          return const SizedBox();
+                        } else {
+                          return Align(
+                            alignment: Alignment.bottomCenter,
+                            child: SizedBox(
+                              width: controller.bannerAd2!.size.width.toDouble(),
+                              height: controller.bannerAd2!.size.height.toDouble(),
+                              child: AdWidget(ad: controller.bannerAd2!),
+                            ),
+                          );
+                        }
+                      }),
                     ],
                   ),
                 ),

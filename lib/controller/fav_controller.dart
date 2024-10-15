@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -17,9 +16,15 @@ class FavController extends GetxController {
      update();
   }
 
+
+  int currentItem = 0;
+
+  void updateCurrentItem(int index) {
+    currentItem = index;
+    update();
+  }
+
   void addToFav(var newData) {
-
-
     if(!favDataId.contains(newData['id'])){
       favData.add(newData);
       favDataId.add(newData['id']);
@@ -28,7 +33,6 @@ class FavController extends GetxController {
     }else{
       log("already added $favDataId");
     }
-
     update();
   }
 
@@ -39,7 +43,6 @@ class FavController extends GetxController {
     box.write("favDataId", favDataId);
     update();
   }
-
 
   void clearFav(){
 

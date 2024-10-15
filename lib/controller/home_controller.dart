@@ -46,7 +46,6 @@ class HomeController extends GetxController{
 
     scrollController.addListener(() {
 
-
       if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
         page = page+1;
         if(screenIndex == 0){
@@ -57,7 +56,7 @@ class HomeController extends GetxController{
           getUpcomingAnime();
         }else{
           ///favourite
-        }// Perform your task
+        }
       }
     },);
     // TODO: implement onInit
