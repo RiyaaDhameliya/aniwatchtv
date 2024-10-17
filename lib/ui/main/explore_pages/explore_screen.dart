@@ -1,3 +1,4 @@
+import 'package:aniwatch_tv/ad_helper.dart';
 import 'package:aniwatch_tv/constant/app_assets.dart';
 import 'package:aniwatch_tv/constant/app_color.dart';
 import 'package:aniwatch_tv/constant/app_string.dart';
@@ -8,14 +9,12 @@ import 'package:aniwatch_tv/controller/bottom_controller.dart';
 import 'package:aniwatch_tv/controller/fav_controller.dart';
 import 'package:aniwatch_tv/controller/home_controller.dart';
 import 'package:aniwatch_tv/ui/main/settings_pages/common_widgets.dart';
-import 'package:aniwatch_tv/ui/main/settings_pages/gradient_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({super.key});
@@ -25,14 +24,57 @@ class ExploreScreen extends StatefulWidget {
   State<ExploreScreen> createState() => _ExploreScreenState();
 }
 
-CarouselSliderController carouselSliderController = CarouselSliderController();
-BottomController bottomController = Get.find();
-AdsController adsController = Get.find();
-FavController favController = Get.find();
+
 
 // int currentItem = 0;
 
 class _ExploreScreenState extends State<ExploreScreen> {
+
+  CarouselSliderController carouselSliderController = CarouselSliderController();
+  BottomController bottomController = Get.find();
+  FavController favController = Get.find();
+  AdsController adsController = Get.find();
+
+
+
+  @override
+  void initState() {
+    loadAdds();
+    // TODO: implement initState
+    super.initState();
+  }
+
+
+  BannerAd? bannerAd3;
+
+  loadAdds(){
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          bannerAd3 = ad as BannerAd;
+          setState(() {
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+
+
+  @override
+  void dispose() {
+    bannerAd3!.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -45,13 +87,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
         }
       },
       child: Scaffold(
-          backgroundColor: black,
+          backgroundColor: backgroundColor,
           body: GetBuilder<HomeController>(
             builder: (controller) {
               if (controller.loading) {
                 return const Center(
                     child: CircularProgressIndicator(
-                  color: lightYellow,
+                  color: pinkColor,
                 ));
               } else {
                 return SafeArea(
@@ -64,21 +106,19 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 15),
                             child: Row(
                               children: [
-                                const GradientText(
-                                  AppString.ani,
-                                  style: TextStyle(
-                                      color: darkYellow,
-                                      fontSize: 39,
-                                      fontFamily: 'Nunito',
-                                      fontWeight: FontWeight.w900),
-                                  gradient: LinearGradient(colors: [
-                                    darkYellow,
-                                    rateColor,
-                                  ]),
+                                const Text(
+                                  AppString.An,
+                                  style: white50,
                                 ),
+                                buildSizedBoxW(size.width * 0.004),
+                                const Text(
+                                  AppString.i,
+                                  style: darkPink50,
+                                ),
+                                buildSizedBoxW(size.width * 0.03),
                                 Image.asset(
                                   AppAssets.ani,
-                                  scale: 6,
+                                  scale: 2.3,
                                 ),
                               ],
                             ),
@@ -106,8 +146,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                       //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
                                       // );
 
-                                      context.pushNamed(
-                                          Routes.animeDetail2Name,
+                                      context.pushNamed(Routes.animeDetail2Name,
                                           extra: controller.allData[controller
                                               .allData
                                               .indexOf(item)]);
@@ -117,7 +156,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                     child: Container(
                                       width: size.width * 0.66,
                                       decoration: BoxDecoration(
-                                          color: lightBrown,
+                                          color: extraDarkPink1,
                                           borderRadius:
                                               BorderRadius.circular(20)),
                                       child: Column(
@@ -211,8 +250,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 child: Container(
                                   height: size.height * 0.12,
                                   width: size.width * 0.12,
-                                  decoration: const BoxDecoration(
-                                      color: lightBrown,
+                                  decoration:  BoxDecoration(
+                                      color: extraDarkPink1,
                                       shape: BoxShape.circle),
                                   child: Icon(
                                     Icons.arrow_left_sharp,
@@ -225,8 +264,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                               Container(
                                 height: size.height * 0.17,
                                 width: size.width * 0.17,
-                                decoration: const BoxDecoration(
-                                    color: lightBrown, shape: BoxShape.circle),
+                                decoration:  BoxDecoration(
+                                    color: extraDarkPink1, shape: BoxShape.circle),
                                 child: Icon(
                                   Icons.share,
                                   color: Colors.white,
@@ -237,8 +276,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                               Container(
                                 height: size.height * 0.17,
                                 width: size.width * 0.17,
-                                decoration: const BoxDecoration(
-                                    color: lightBrown, shape: BoxShape.circle),
+                                decoration:  BoxDecoration(
+                                    color: extraDarkPink1, shape: BoxShape.circle),
                                 child: GetBuilder<FavController>(
                                   builder: (controller1) => GestureDetector(
                                     onTap: () {
@@ -280,8 +319,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                                 child: Container(
                                   height: size.height * 0.12,
                                   width: size.width * 0.12,
-                                  decoration: const BoxDecoration(
-                                      color: lightBrown,
+                                  decoration:  BoxDecoration(
+                                      color: extraDarkPink1,
                                       shape: BoxShape.circle),
                                   child: Icon(
                                     Icons.arrow_right_sharp,
@@ -296,17 +335,17 @@ class _ExploreScreenState extends State<ExploreScreen> {
                         ],
                       ),
                       GetBuilder<AdsController>(builder: (controller) {
-                        if (controller.bannerAd3 == null) {
+                        if (bannerAd3 == null) {
                           return const SizedBox();
                         } else {
                           return Align(
                             alignment: Alignment.bottomCenter,
                             child: SizedBox(
                               width:
-                                  controller.bannerAd3!.size.width.toDouble(),
+                                  bannerAd3!.size.width.toDouble(),
                               height:
-                                  controller.bannerAd3!.size.height.toDouble(),
-                              child: AdWidget(ad: controller.bannerAd3!),
+                                 bannerAd3!.size.height.toDouble(),
+                              child: AdWidget(ad: bannerAd3!),
                             ),
                           );
                         }

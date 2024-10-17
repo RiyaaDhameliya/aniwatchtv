@@ -7,14 +7,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import '../../../constant/app_textstyle.dart';
 import '../../../controller/fav_controller.dart';
-import '../home_pages/anime_detail_screen.dart';
 
 
 BottomController bottomController = Get.find();
-AdsController adsController = Get.find();
+  AdsController adsController = Get.find();
 FavController favController = Get.find();
 BottomController dashboardController = Get.find();
 
@@ -98,10 +96,10 @@ class _CustomGridState extends State<CustomGrid> {
                   ),
                   Container(
                     decoration:
-                    const BoxDecoration(
-                      color: lightBrown,
+                     BoxDecoration(
+                      color: extraDarkPink1,
                       borderRadius:
-                      BorderRadius.vertical(
+                      const BorderRadius.vertical(
                         bottom:
                         Radius.circular(10),
                       ),
@@ -126,12 +124,7 @@ class _CustomGridState extends State<CustomGrid> {
                             overflow:
                             TextOverflow
                                 .ellipsis,
-                            style:
-                            const TextStyle(
-                                color:
-                                white,
-                                fontSize:
-                                14,fontWeight: FontWeight.bold,letterSpacing: 0.8),
+                            style:white14bold
                           ),
                           Row(
                             children: [
@@ -172,7 +165,7 @@ class _CustomGridState extends State<CustomGrid> {
                 width: width * 0.08,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: black,
+                  color: backgroundColor,
                 ),
                 child:
                 GetBuilder<FavController>(

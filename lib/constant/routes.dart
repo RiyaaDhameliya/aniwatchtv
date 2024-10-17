@@ -61,7 +61,7 @@ class Routes {
               path: homePath,
               name: homeName,
               parentNavigatorKey: _shellNavigatorKey,
-              builder: (context, state) =>  HomeScreen()),
+              builder: (context, state) =>  const HomeScreen()),
           GoRoute(
               path: animeDetailPath,
               name: animeDetailName,

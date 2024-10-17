@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:aniwatch_tv/ad_helper.dart';
 import 'package:aniwatch_tv/constant/app_color.dart';
 import 'package:aniwatch_tv/constant/app_string.dart';
 import 'package:aniwatch_tv/constant/app_textstyle.dart';
@@ -16,7 +17,6 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-
 class FavouriteScreen extends StatefulWidget {
   const FavouriteScreen({super.key});
 
@@ -31,16 +31,50 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   BottomController bottomController = Get.find();
 
   @override
+  void initState() {
+    loadAdds();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  BannerAd? bannerAd4;
+
+  loadAdds() {
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          bannerAd4 = ad as BannerAd;
+          setState(() {});
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+
+  @override
+  void dispose() {
+    bannerAd4!.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        backgroundColor: black,
+        backgroundColor: backgroundColor,
         appBar: CustomAppBar(
           height: MediaQuery.of(context).size.height * 0.12,
           child: Padding(
-            padding: const EdgeInsets.only(left: 15, top: 30,bottom: 20),
+            padding: const EdgeInsets.only(left: 15, top: 30, bottom: 20),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -55,8 +89,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                     size: 22,
                   ),
                 ),
-                buildSizedBoxW( width * 0.29),
-
+                buildSizedBoxW(width * 0.29),
                 const Text(
                   AppString.favourites,
                   style: white20,
@@ -70,8 +103,8 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
             if (false) {
               return const Center(
                   child: CircularProgressIndicator(
-                    color: lightYellow,
-                  ));
+                color: pinkColor,
+              ));
             } else {
               return SafeArea(
                 child: Padding(
@@ -83,11 +116,10 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                           children: [
                             GridView.builder(
                               itemCount: favController.favDataId.length,
-                              physics:
-                              const NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
                                 childAspectRatio: 0.57,
                                 crossAxisSpacing: 15,
@@ -112,66 +144,59 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                                         //   withNavBar: true,
                                         //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
                                         // );
-                                        context.pushNamed(Routes.animeDetailName,extra: favController.favData[index]);
+                                        context.pushNamed(
+                                            Routes.animeDetailName,
+                                            extra:
+                                                favController.favData[index]);
                                         adsController.showAdd();
-                                        adsController.loadBannerAds();
                                       },
                                       child: Column(
                                         children: [
                                           Expanded(
                                             child: ClipRRect(
                                               borderRadius:
-                                              const BorderRadius
-                                                  .vertical(
-                                                  top: Radius
-                                                      .circular(
-                                                      20)),
+                                                  const BorderRadius.vertical(
+                                                      top: Radius.circular(20)),
                                               child: CachedNetworkImage(
-                                                imageUrl: favController.favData[
-                                                index]
-                                                ['coverImage']
-                                                ['extraLarge'],
+                                                imageUrl:
+                                                    favController.favData[index]
+                                                            ['coverImage']
+                                                        ['extraLarge'],
                                                 fit: BoxFit.cover,
                                                 width: width * 0.6,
                                               ),
                                             ),
                                           ),
                                           Container(
-                                            decoration:
-                                            const BoxDecoration(
-                                              color: lightBrown,
+                                            decoration: BoxDecoration(
+                                              color: extraDarkPink1,
                                               borderRadius:
-                                              BorderRadius.vertical(
-                                                bottom:
-                                                Radius.circular(10),
+                                                  const BorderRadius.vertical(
+                                                bottom: Radius.circular(10),
                                               ),
                                             ),
                                             child: Padding(
-                                              padding:
-                                              const EdgeInsets.only(
+                                              padding: const EdgeInsets.only(
                                                   left: 10,
                                                   right: 10,
                                                   bottom: 5),
                                               child: Column(
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   SizedBox(
-                                                      height: height *
-                                                          0.01),
+                                                      height: height * 0.01),
                                                   Text(
                                                     '${favController.favData[index]["title"]['userPreferred']}',
                                                     maxLines: 2,
                                                     overflow:
-                                                    TextOverflow
-                                                        .ellipsis,
-                                                    style:
-                                                    const TextStyle(
-                                                        color:
-                                                        white,
-                                                        fontSize:
-                                                        14,fontWeight: FontWeight.bold,letterSpacing: 0.8),
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                        color: white,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        letterSpacing: 0.8),
                                                   ),
                                                   Row(
                                                     children: [
@@ -181,15 +206,12 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                                                       ),
                                                       const Spacer(),
                                                       const Icon(
-                                                        Icons
-                                                            .star_rate_rounded,
-                                                        color: Colors
-                                                            .yellow,
+                                                        Icons.star_rate_rounded,
+                                                        color: Colors.yellow,
                                                         size: 16,
                                                       ),
                                                       SizedBox(
-                                                        width: width *
-                                                            0.01,
+                                                        width: width * 0.01,
                                                       ),
                                                       Text(
                                                         '${(favController.favData[index]['averageScore'] * 0.1).toStringAsFixed(1)}',
@@ -212,41 +234,39 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                                         width: width * 0.08,
                                         decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: black,
+                                          color: backgroundColor,
                                         ),
-                                        child:
-                                        GetBuilder<FavController>(
+                                        child: GetBuilder<FavController>(
                                           builder: (controller1) =>
                                               GestureDetector(
-                                                onTap: () {
-                                                  if (favController.favDataId.contains(favController.favData[index]['id']))
-                                                  {
-                                                    favController.removeFromFav(favController.favData[index]);
-                                                  }
-                                                  else
-                                                  {
-                                                    favController.addToFav(favController.favData[index]);
-
-                                                  }
-                                                  log("FAV ${favController.favData[index]['id']}");
-                                                },
-                                                child: favController
-                                                    .favDataId
-                                                    .contains(
-                                                    favController.favData[
-                                                    index]['id'])
-                                                    ? const Icon(
-                                                  Icons.favorite,
-                                                  color: Colors.red,
-                                                  size: 17,
-                                                )
-                                                    : const Icon(
-                                                  Icons
-                                                      .favorite_border,
-                                                  color: white,
-                                                  size: 17,
-                                                ),
-                                              ),
+                                            onTap: () {
+                                              if (favController.favDataId
+                                                  .contains(favController
+                                                      .favData[index]['id'])) {
+                                                favController.removeFromFav(
+                                                    favController
+                                                        .favData[index]);
+                                              } else {
+                                                favController.addToFav(
+                                                    favController
+                                                        .favData[index]);
+                                              }
+                                              log("FAV ${favController.favData[index]['id']}");
+                                            },
+                                            child: favController.favDataId
+                                                    .contains(favController
+                                                        .favData[index]['id'])
+                                                ? const Icon(
+                                                    Icons.favorite,
+                                                    color: Colors.red,
+                                                    size: 17,
+                                                  )
+                                                : const Icon(
+                                                    Icons.favorite_border,
+                                                    color: white,
+                                                    size: 17,
+                                                  ),
+                                          ),
                                         ),
                                       ),
                                     )
@@ -254,21 +274,20 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                                 );
                               },
                             ),
-
-                            buildSizedBoxH(height*0.1),
+                            buildSizedBoxH(height * 0.1),
                           ],
                         ),
                       ),
                       GetBuilder<AdsController>(builder: (controller) {
-                        if (controller.bannerAd4 == null) {
+                        if (bannerAd4 == null) {
                           return const SizedBox();
                         } else {
                           return Align(
                             alignment: Alignment.bottomCenter,
                             child: SizedBox(
-                              width: controller.bannerAd4!.size.width.toDouble(),
-                              height: controller.bannerAd4!.size.height.toDouble(),
-                              child: AdWidget(ad: controller.bannerAd4!),
+                              width: bannerAd4!.size.width.toDouble(),
+                              height: bannerAd4!.size.height.toDouble(),
+                              child: AdWidget(ad: bannerAd4!),
                             ),
                           );
                         }
@@ -282,5 +301,3 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
         ));
   }
 }
-
-

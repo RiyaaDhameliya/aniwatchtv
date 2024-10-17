@@ -22,7 +22,7 @@ class TextWrapper extends StatelessWidget {
               : const BoxConstraints(maxHeight: 70),
           child: Text(
             text,
-            style: const TextStyle(fontSize: 15, color: txtGreyColor),
+            style: const TextStyle(fontSize: 14, color: txtGreyColor,fontFamily: "Montserrat-Regular"),
             softWrap: true,
             overflow: TextOverflow.fade,
           ),

@@ -1,7 +1,6 @@
 
 import 'package:aniwatch_tv/constant/app_color.dart';
 import 'package:aniwatch_tv/constant/app_textstyle.dart';
-import 'package:aniwatch_tv/constant/routes.dart';
 import 'package:aniwatch_tv/controller/bottom_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -83,7 +82,7 @@ class _VideoScreenState extends State<VideoScreen> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: black,
+        backgroundColor: backgroundColor,
         appBar: CustomAppBar(
           height: isFullScreen ? 0 :  MediaQuery.of(context).size.height *0.1,
           child:isFullScreen ? const SizedBox() : Padding(

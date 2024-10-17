@@ -86,7 +86,9 @@ class SplashController extends GetxController with GetSingleTickerProviderStateM
   TextEditingController nameController = TextEditingController();
   GetStorage box = GetStorage();
   String text = AppString.splashWelcomeText;
-  String text1 = AppString.splashWelcomeText1;
+  String text1 = AppString.an;
+  String text2 = AppString.i;
+  String text3 = AppString.watch;
   String image = AppAssets.splashLogo;
   late Animation animation;
 
@@ -113,16 +115,23 @@ class SplashController extends GetxController with GetSingleTickerProviderStateM
     contentState = (contentState + 1) % 3;
     if (contentState == 0) {
       text = AppString.splashWelcomeText;
-      text1 = AppString.splashWelcomeText1;
+      text1 = AppString.an;
+      text2 = AppString.i;
+      text3 = AppString.watch;
       image = AppAssets.splashLogo;
     } else if (contentState == 1) {
       text = AppString.splashFreeText;
-      text1 = AppString.splashFreeText1;
-      image = AppAssets.splashLogo1;
-    } else if (contentState == 2) {
+      text1 = AppString.an;
+      text2 = AppString.i;
+      text3 = AppString.me;
+      image = AppAssets.splashLogo;
+    }
+    else if (contentState == 2) {
       text = AppString.splashNameText;
       text1 = "";
-      image = AppAssets.splashLogo2;
+      text2 = "";
+      text3 = "";
+      image = AppAssets.splashLogo;
     }
 
     update();

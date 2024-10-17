@@ -10,8 +10,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'main/settings_pages/gradient_text.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -30,7 +28,6 @@ class SplashScreenState extends State<SplashScreen>
 
   // late Animation animation;
   // late AnimationController animationController;
-
   // int contentState = 0;
   // bool _visible = false;
   // String _text = AppString.splashWelcomeText;
@@ -40,7 +37,6 @@ class SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     // TODO: implement initState
-
     super.initState();
     //
     // animationController = AnimationController(
@@ -105,9 +101,8 @@ class SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: backgroundColor,
       body: GetBuilder<SplashController>(
         builder: (controller) {
           return Column(
@@ -116,7 +111,7 @@ class SplashScreenState extends State<SplashScreen>
                 child: Container(
                   width: size.width,
                   decoration: const BoxDecoration(
-                    color: Colors.black,
+                    color: backgroundColor,
                     image: DecorationImage(
                         image: AssetImage(AppAssets.newSplashBg),
                         fit: BoxFit.cover),
@@ -127,12 +122,11 @@ class SplashScreenState extends State<SplashScreen>
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        stops: [0.04, 0.15, 0.2, 1],
+                        stops: [0.04, 0.15, 1],
                         colors: [
                           Colors.black38,
                           Colors.black45,
-                          Colors.black54,
-                          Colors.black,
+                          backgroundColor,
                         ],
                       ),
                     ),
@@ -144,8 +138,8 @@ class SplashScreenState extends State<SplashScreen>
                           return Opacity(
                             opacity: controller.animation.value,
                             child: Container(
-                              width: 150,
-                              height: 150,
+                              width: 120,
+                              height: 120,
                               decoration: BoxDecoration(
                                 image: DecorationImage(
                                   image: AssetImage(controller.image),
@@ -162,7 +156,7 @@ class SplashScreenState extends State<SplashScreen>
               Expanded(
                 child: Container(
                   width: size.width,
-                  decoration: const BoxDecoration(color: Colors.black),
+                  decoration: const BoxDecoration(color: backgroundColor),
                   child: Column(
                     children: [
                       AnimatedBuilder(
@@ -172,13 +166,17 @@ class SplashScreenState extends State<SplashScreen>
                             opacity: controller.animation.value,
                             child: Column(
                               children: [
-                                Text(
+                                /*  Text(
                                   controller.text,
                                   style: GoogleFonts.roboto(
                                     textStyle: white32
                                   ),
+                                ),*/
+                                Text(
+                                  controller.text,
+                                  style: white28,
                                 ),
-                                GradientText(
+                                /*  GradientText(
                                   controller.text1,
                                   style: GoogleFonts.roboto(
                                     textStyle: lightYellow49bold
@@ -187,7 +185,39 @@ class SplashScreenState extends State<SplashScreen>
                                     darkYellow,
                                     rateColor,
                                   ]),
-                                ),
+                                ),*/
+                               controller.contentState==0? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      controller.text1,
+                                      style: white50,
+                                    ),
+                                    Text(
+                                     controller.text2,
+                                      style: darkPink50,
+                                    ),
+                                    Text(
+                                      controller.text3,
+                                      style: white50,
+                                    ),
+                                  ],
+                                ):controller.contentState==1?Row(
+                                 mainAxisAlignment: MainAxisAlignment.center,
+                                 children: [
+                                   Text(
+                                     controller.text1,
+                                     style: white50,
+                                   ),
+                                   Text(
+                                     controller.text2,
+                                     style: darkPink50,
+                                   ), Text(
+                                     controller.text3,
+                                     style: white50,
+                                   ),
+                                 ],
+                               ):const SizedBox(),
                               ],
                             ),
                           );
@@ -196,7 +226,7 @@ class SplashScreenState extends State<SplashScreen>
                       controller.contentState == 2
                           ? Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
+                                  const EdgeInsets.all(20),
                               child: AnimatedBuilder(
                                 animation: controller.animation,
                                 builder: (context, child) {
@@ -204,24 +234,28 @@ class SplashScreenState extends State<SplashScreen>
                                     opacity: controller.animation.value,
                                     child: TextField(
                                       controller: controller.nameController,
-                                      cursorColor: lightYellow,
-                                      style:
-                                          const TextStyle(color: lightYellow),
+                                      cursorColor: pinkColor,
+                                      style: const TextStyle(color: pinkColor),
                                       decoration: InputDecoration(
                                         filled: true,
-                                        fillColor: Colors.grey[800],
+                                        fillColor: textFieldColor,
                                         hintText: AppString.splashTxtFld,
                                         hintStyle:
-                                            const TextStyle(color: lightYellow),
+                                            const TextStyle(color: pinkColor,fontFamily: "Montserrat-Regular"),
                                         border: OutlineInputBorder(
+                                          borderSide: const BorderSide(color: pinkColor),
                                           borderRadius:
-                                              BorderRadius.circular(10),
+                                              BorderRadius.circular(30),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: pinkColor),
+                                          borderRadius: BorderRadius.circular(30),
                                         ),
                                         focusedBorder: OutlineInputBorder(
                                           borderRadius:
-                                              BorderRadius.circular(10),
+                                              BorderRadius.circular(30),
                                           borderSide: const BorderSide(
-                                              color: lightYellow),
+                                              color: pinkColor),
                                         ),
                                       ),
                                     ),
@@ -231,71 +265,68 @@ class SplashScreenState extends State<SplashScreen>
                             )
                           : const SizedBox(),
                       const Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          3,
+                          (index) {
+                            return Container(
+                              margin: const EdgeInsets.all(5),
+                              height: size.height * 0.005,
+                              width: size.width * 0.075,
+                              decoration: BoxDecoration(
+                                color: controller.contentState == index
+                                    ? pinkColor
+                                    : pinkColor.withOpacity(0.4),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Row(
-                              children: List.generate(
-                                3,
-                                (index) {
-                                  return Container(
-                                    margin: const EdgeInsets.all(5),
-                                    height: size.height * 0.015,
-                                    width: size.width * 0.015,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: controller.contentState == index
-                                          ? lightYellow
-                                          : lightBrown,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            const Spacer(),
-                            MaterialButton(
-                              height: size.height * 0.056,
-                              minWidth: size.width * 0.23,
-                              color: lightYellow,
-                              shape: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              onPressed: () {
-                                if (controller.contentState == 2) {
-                                  if (controller.nameController.text.isNotEmpty) {
-                                    box.write('name',controller. nameController.text).then((value) {
-                                      setState(() {
-                                      });
-                                      context.go('/home',extra: controller.nameController.text);
-                                    },);
-                                    //Get.to(() =>  DashbordScreen(child: const Center(child: Text("Empty"),),));
-                                  } else {
-                                    Fluttertoast.showToast(
-                                      msg: AppString.enterName,
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.TOP,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: lightYellow,
-                                      textColor: black,
-                                      fontSize: 18,
-                                    );
-                                    return;
-                                  }
-                                }else{
-                                  controller.toggleContent(context);
-                                }
-                              },
-                              child: Text(
-                                AppString.next,
-                                style: GoogleFonts.roboto(
-                                  textStyle: black17W700
-                                ),
-                              ),
-                            ),
-                          ],
+                            horizontal: 20, vertical: 20),
+                        child: MaterialButton(
+                          height: size.height * 0.07,
+                          minWidth: size.width * 0.8,
+                          color: pinkColor,
+                          shape: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          onPressed: () {
+                            if (controller.contentState == 2) {
+                              if (controller.nameController.text.isNotEmpty) {
+                                box
+                                    .write(
+                                        'name', controller.nameController.text)
+                                    .then(
+                                  (value) {
+                                    setState(() {});
+                                    context.go('/home',
+                                        extra: controller.nameController.text);
+                                  },
+                                );
+                                //Get.to(() =>  DashbordScreen(child: const Center(child: Text("Empty"),),));
+                              } else {
+                                Fluttertoast.showToast(
+                                  msg: AppString.enterName,
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.TOP,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: pinkColor,
+                                  textColor: Colors.black,
+                                  fontSize: 18,
+                                );
+                                return;
+                              }
+                            } else {
+                              controller.toggleContent(context);
+                            }
+                          },
+                          child: const Text(
+                            AppString.next,
+                            style:  black17W700,
+                          ),
                         ),
                       ),
                     ],

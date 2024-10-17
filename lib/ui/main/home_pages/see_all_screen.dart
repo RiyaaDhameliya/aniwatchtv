@@ -5,13 +5,14 @@ import 'package:aniwatch_tv/controller/ads_controller.dart';
 import 'package:aniwatch_tv/controller/bottom_controller.dart';
 import 'package:aniwatch_tv/controller/fav_controller.dart';
 import 'package:aniwatch_tv/controller/home_controller.dart';
-import 'package:aniwatch_tv/ui/main/settings_pages/common_widgets.dart';
 import 'package:aniwatch_tv/ui/main/widget/app_bar.dart';
 import 'package:aniwatch_tv/ui/main/widget/grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+import '../../../ad_helper.dart';
 
 
 class SeeAllScreen extends StatefulWidget {
@@ -26,27 +27,59 @@ class SeeAllScreen extends StatefulWidget {
 class _SeeAllScreenState extends State<SeeAllScreen> {
   BottomController bottomController = Get.find();
   HomeController homeController = Get.find();
-  AdsController adsController = Get.find();
   FavController favController = Get.find();
 
   @override
   void initState() {
+
+    loadAdds();
     // TODO: implement initState
     super.initState();
   }
 
+  BannerAd? bannerAd2;
+
+
+  loadAdds(){
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          bannerAd2 = ad as BannerAd;
+          setState(() {
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+
+
+  @override
+  void dispose() {
+
+    bannerAd2!.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-
     return Scaffold(
-        backgroundColor: black,
+        backgroundColor: backgroundColor,
         appBar: CustomAppBar(
           height: MediaQuery.of(context).size.height * 0.12,
           child: Padding(
             padding: const EdgeInsets.only(left: 15, top: 30,bottom: 20),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+
               children: [
                 GestureDetector(
                   onTap: () {
@@ -59,8 +92,6 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
                     size: 22,
                   ),
                 ),
-
-                buildSizedBoxW(width * 0.29),
                 Text(
                   homeController.screenIndex == 0
                       ? AppString.topAnime
@@ -69,6 +100,9 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
                           : AppString.favourite,
                   style: white20,
                 ),
+                const SizedBox(
+                  width: 22,
+                )
               ],
             ),
           ),
@@ -78,7 +112,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
             if (controller.loading) {
               return const Center(
                   child: CircularProgressIndicator(
-                color: lightYellow,
+                color: pinkColor,
               ));
             } else {
               return SafeArea(
@@ -94,7 +128,7 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
                                 if (controller.loading) {
                                   return const Center(
                                       child: CircularProgressIndicator(
-                                    color: lightYellow,
+                                    color: pinkColor,
                                   ));
                                 } else {
                                   return SingleChildScrollView(
@@ -112,15 +146,15 @@ class _SeeAllScreenState extends State<SeeAllScreen> {
                         ],
                       ),
                       GetBuilder<AdsController>(builder: (controller) {
-                        if (controller.bannerAd2 == null) {
+                        if (bannerAd2 == null) {
                           return const SizedBox();
                         } else {
                           return Align(
                             alignment: Alignment.bottomCenter,
                             child: SizedBox(
-                              width: controller.bannerAd2!.size.width.toDouble(),
-                              height: controller.bannerAd2!.size.height.toDouble(),
-                              child: AdWidget(ad: controller.bannerAd2!),
+                              width: bannerAd2!.size.width.toDouble(),
+                              height: bannerAd2!.size.height.toDouble(),
+                              child: AdWidget(ad: bannerAd2!),
                             ),
                           );
                         }

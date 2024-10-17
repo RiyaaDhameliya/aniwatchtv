@@ -1,17 +1,16 @@
 import 'dart:developer';
+import 'package:aniwatch_tv/ad_helper.dart';
 import 'package:aniwatch_tv/constant/app_color.dart';
 import 'package:aniwatch_tv/constant/app_textstyle.dart';
 import 'package:aniwatch_tv/constant/routes.dart';
 import 'package:aniwatch_tv/controller/bottom_controller.dart';
 import 'package:aniwatch_tv/controller/fav_controller.dart';
 import 'package:aniwatch_tv/controller/home_controller.dart';
-import 'package:aniwatch_tv/ui/main/home_pages/video_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import '../../../constant/app_assets.dart';
 import '../../../constant/app_string.dart';
 import '../../../constant/text_wrapper.dart';
@@ -41,8 +40,40 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
     // getDemographic();
     homeController.getTopAnime();
     homeController.getUpcomingAnime();
+    loadAdds();
     // TODO: implement initState
     super.initState();
+  }
+
+
+  BannerAd? bannerAd;
+
+
+  loadAdds(){
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          bannerAd = ad as BannerAd;
+          setState(() {
+          });
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
+
+
+  @override
+  void dispose() {
+    bannerAd!.dispose();
+    // TODO: implement dispose
+    super.dispose();
   }
 
 /*  getDemographic() {
@@ -68,7 +99,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-        backgroundColor: black,
+        backgroundColor: backgroundColor,
         appBar: CustomAppBar(
           height: MediaQuery.of(context).size.height * 0.10,
           child: Padding(
@@ -123,7 +154,7 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
             if (controller.loading) {
               return const Center(
                   child: CircularProgressIndicator(
-                color: lightYellow,
+                color: pinkColor,
               ));
             } else {
               return SafeArea(
@@ -246,21 +277,25 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
                             height: size.height * 0.065,
                             width: size.width * 0.9,
                             decoration: BoxDecoration(
+                              color: extraDarkPink,
                               borderRadius: BorderRadius.circular(40),
-                              border:
-                                  Border.all(color: lightYellow, width: 0.4),
+                              gradient: const LinearGradient(
+                                  colors: [extraDarkPink, darkPink1],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                              ),
                             ),
-                            child: const Row(
+                            child:  const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.play_arrow_rounded,
-                                  color: white,
+                                  color: blackColor,
                                   size: 40,
                                 ),
                                 Text(
                                   AppString.videos,
-                                  style: whiteColor,
+                                  style: TextStyle(color: blackColor),
                                 ),
                               ],
                             ),
@@ -270,17 +305,17 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
                         buildDivider(size),
                         buildSizedBoxH(size.height*0.02),
                         GetBuilder<AdsController>(builder: (controller) {
-                          if (controller.bannerAd == null) {
+                          if (bannerAd == null) {
                             return const SizedBox();
                           } else {
                             return Align(
                               alignment: Alignment.bottomCenter,
                               child: SizedBox(
                                 width:
-                                    controller.bannerAd!.size.width.toDouble(),
+                                    bannerAd!.size.width.toDouble(),
                                 height:
-                                    controller.bannerAd!.size.height.toDouble(),
-                                child: AdWidget(ad: controller.bannerAd!),
+                                    bannerAd!.size.height.toDouble(),
+                                child: AdWidget(ad: bannerAd!),
                               ),
                             );
                           }
@@ -541,12 +576,12 @@ class _AnimeDetailScreenState extends State<AnimeDetailScreen> {
                                               children: [
                                                 Icon(
                                                   Icons.ios_share,
-                                                  color: yellowColor,
+                                                  color: pinkColor,
                                                   size: size.height * 0.02,
                                                 ),
                                                 const Text(
                                                   AppString.shareNow,
-                                                  style: yellow,
+                                                  style: pink,
                                                 ),
                                               ],
                                             ),

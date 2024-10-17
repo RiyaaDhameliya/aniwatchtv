@@ -17,6 +17,13 @@ class _DashbordScreenState extends State<DashbordScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+
+    final size = MediaQuery.of(context).size;
+
+    print("${size.height * 0.034}");
+
+
     return Scaffold(
       bottomNavigationBar: OrientationBuilder(
         builder: (context, orientation) {
@@ -25,9 +32,12 @@ class _DashbordScreenState extends State<DashbordScreen> {
           }else{
             return BottomNavigationBar(
                 currentIndex: index,
-                selectedItemColor: lightYellow,
+                elevation: 0,
+                selectedItemColor: const Color(0xffFFA8D5),
                 unselectedItemColor: txtFldText,
-                backgroundColor: black,
+                selectedLabelStyle: const TextStyle(fontFamily: "Montserrat-Regular"),
+                unselectedLabelStyle: const TextStyle(fontFamily: "Montserrat-Regular"),
+                backgroundColor: backgroundColor,
                type: BottomNavigationBarType.fixed,
                 onTap: (value) {
                   if(value==0){
@@ -42,13 +52,13 @@ class _DashbordScreenState extends State<DashbordScreen> {
                   }
                   setState(() {});
                 },
-                items: const [
+                items:  [
                   BottomNavigationBarItem(
-                      icon: Icon(Icons.play_circle), label: "Anime"),
+                      icon: Icon(Icons.home,size: size.height * 0.034,), label: "Home"),
                   BottomNavigationBarItem(
-                      icon: Icon(Icons.web_stories), label: "Explore"),
+                      icon: Icon(Icons.web_stories,size: size.height * 0.030), label: "Explore"),
                   BottomNavigationBarItem(
-                      icon: Icon(Icons.settings), label: "Settings"),
+                      icon: Icon(Icons.settings,size: size.height * 0.030), label: "Settings"),
                 ]);
           }
         },

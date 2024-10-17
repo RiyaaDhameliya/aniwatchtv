@@ -1,3 +1,4 @@
+import 'package:aniwatch_tv/ad_helper.dart';
 import 'package:aniwatch_tv/constant/app_assets.dart';
 import 'package:aniwatch_tv/constant/app_color.dart';
 import 'package:aniwatch_tv/constant/app_string.dart';
@@ -13,11 +14,11 @@ import 'package:aniwatch_tv/ui/main/widget/app_bar.dart';
 import 'package:aniwatch_tv/ui/main/widget/grid_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -33,16 +34,37 @@ class _HomeScreenState extends State<HomeScreen> {
   AdsController adsController = Get.find();
   GetStorage box = GetStorage();
   List<bool> isFavorited = List.generate(7, (index) => false);
+  BannerAd? bannerAd1;
+
+  loadAdds() {
+    BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      request: const AdRequest(),
+      size: AdSize.banner,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          bannerAd1 = ad as BannerAd;
+          setState(() {});
+        },
+        onAdFailedToLoad: (ad, err) {
+          print('Failed to load a banner ad: ${err.message}');
+          ad.dispose();
+        },
+      ),
+    ).load();
+  }
 
   @override
   void initState() {
-   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-     favController.getFavData();
-     homeController.getTopAnime();
-     homeController.getUpcomingAnime();
-     adsController.loadBannerAds();
-     adsController.loadInterstitialAds();
-   },);
+    loadAdds();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        favController.getFavData();
+        homeController.getTopAnime();
+        homeController.getUpcomingAnime();
+        adsController.loadInterstitialAds();
+      },
+    );
 
     /// adsController.showAdd();
     ///
@@ -52,10 +74,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    bannerAd1?.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: black,
+      backgroundColor: backgroundColor,
       appBar: CustomAppBar(
         height: MediaQuery.of(context).size.height * 0.17,
         child: Column(
@@ -65,21 +94,19 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.only(left: 15, top: 50),
               child: Row(
                 children: [
-                  const GradientText(
-                    AppString.ani,
-                    style: TextStyle(
-                        fontFamily: 'Nunito',
-                        color: darkYellow,
-                        fontSize: 39,
-                        fontWeight: FontWeight.w900),
-                    gradient: LinearGradient(colors: [
-                      darkYellow,
-                      rateColor,
-                    ]),
+                  const Text(
+                    AppString.An,
+                    style: white50,
                   ),
+                  buildSizedBoxW(size.width * 0.004),
+                  const Text(
+                    AppString.i,
+                    style: darkPink50,
+                  ),
+                  buildSizedBoxW(size.width * 0.03),
                   Image.asset(
                     AppAssets.ani,
-                    scale: 6,
+                    scale: 2.3,
                   ),
                 ],
               ),
@@ -100,50 +127,80 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        buildSizedBoxH( size.height * 0.02),
+                        buildSizedBoxH(size.height * 0.02),
                         Text(
                           "Hello ${box.read("name") ?? ''}!",
                           style: whiteColor27,
                         ),
                         const Text(
                           AppString.homeText1,
-                          style:  txtGrey13,
-                        ),
-                        const Text(
-                          AppString.homeText2,
                           style: txtGrey13,
                         ),
-                        buildSizedBoxH( size.height * 0.02),
+                        buildSizedBoxH(size.height * 0.02),
                         Padding(
                           padding: const EdgeInsets.only(right: 15),
-                          child: TextField(
-                            controller: controller.searchController,
-                            onChanged: (value) {
-                              controller.getAnimeBySearch(value);
-                            },
-                            cursorColor: lightYellow,
-                            style: const TextStyle(color: lightYellow),
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.zero,
-                              filled: true,
-                              fillColor: txtFldGrey.withOpacity(0.5),
-                              prefixIcon: const Icon(
-                                Icons.search,
-                                color: txtFldText,
-                                size: 19,
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: TextField(
+                                  controller: controller.searchController,
+                                  onChanged: (value) {
+                                    controller.getAnimeBySearch(value);
+                                  },
+                                  cursorColor: pinkColor,
+                                  style: const TextStyle(color: pinkColor),
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.zero,
+                                    filled: true,
+                                    fillColor: textFieldColor,
+                                    prefixIcon: const Icon(
+                                      Icons.search,
+                                      color: pinkColor,
+                                      size: 19,
+                                    ),
+                                    hintText: AppString.search,
+                                    hintStyle:
+                                        const TextStyle(color: pinkColor),
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(color: pinkColor),
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(color: pinkColor),
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide:
+                                          const BorderSide(color: pinkColor),
+                                    ),
+                                  ),
+                                ),
                               ),
-                              hintText: AppString.search,
-                              hintStyle: const TextStyle(color: txtFldText),
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide.none,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
+                              buildSizedBoxW(15),
+                              // SvgPicture.asset("")
+                              Container(
+                                height: size.height * 0.055,
+                                width: size.height * 0.055,
+                                decoration: BoxDecoration(
+                                    color: pinkColor,
+                                    borderRadius: BorderRadius.circular(5)),
+                                child: Center(
+                                    child: Image.asset(
+                                  AppAssets.search,
+                                  width: size.height * 0.035,
+                                  height: size.height * 0.035,
+                                )),
+                              )
+                            ],
                           ),
                         ),
                         buildSizedBoxH(size.height * 0.02),
                         controller.loading
-                            ? const Center(child: CircularProgressIndicator(color: lightYellow,))
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                color: pinkColor,
+                              ))
                             : controller.searchController.text == ""
                                 ? Column(
                                     children: [
@@ -166,19 +223,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 //   withNavBar: true,
                                                 //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
                                                 // );
-                                                context.pushNamed(Routes.seeAllName);
-
+                                                homeController
+                                                    .setScreenIndex(0);
+                                                context.pushNamed(
+                                                    Routes.seeAllName);
                                               },
                                               child: const Text(
                                                 AppString.seeAll,
-                                                style: lightYellow13,
+                                                style: pink13,
                                               ),
                                             ),
                                             buildSizedBoxW(size.width * 0.02),
-
                                             const Icon(
                                               Icons.arrow_forward_ios_outlined,
-                                              color: lightYellow,
+                                              color: pinkColor,
                                               size: 12,
                                             ),
                                           ],
@@ -200,7 +258,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 scrollDirection:
                                                     Axis.horizontal,
                                                 itemBuilder: (context, index) {
-                                                  print("Data${controller.newTop.toString()}");
+                                                  print(
+                                                      "Data${controller.newTop.toString()}");
                                                   return Row(
                                                     children: [
                                                       GestureDetector(
@@ -214,7 +273,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           //   withNavBar: true,
                                                           //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
                                                           // );
-                                                          context.pushNamed(Routes.animeDetailName,extra: controller.newTop[index]);
+                                                          context.pushNamed(
+                                                              Routes
+                                                                  .animeDetailName,
+                                                              extra: controller
+                                                                      .newTop[
+                                                                  index]);
                                                           adsController
                                                               .showAdd();
                                                           // adsController
@@ -222,7 +286,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         },
                                                         child: Stack(
                                                           children: [
-
                                                             SizedBox(
                                                               width:
                                                                   size.width *
@@ -234,28 +297,40 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 children: [
                                                                   ClipRRect(
                                                                     borderRadius:
-                                                                        BorderRadius.circular(10),
+                                                                        BorderRadius.circular(
+                                                                            10),
                                                                     child:
                                                                         CachedNetworkImage(
                                                                       imageUrl: controller.newTop[index]
-                                                                              ['coverImage']
-                                                                          ['extraLarge'],
-                                                                      fit: BoxFit.cover,
-                                                                      height: size.height * 0.25,
-                                                                      width: size.width * 0.34,
+                                                                              [
+                                                                              'coverImage']
+                                                                          [
+                                                                          'extraLarge'],
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      height: size
+                                                                              .height *
+                                                                          0.25,
+                                                                      width: size
+                                                                              .width *
+                                                                          0.34,
                                                                     ),
                                                                   ),
-                                                                  buildSizedBoxH(size
-                                                                      .height *
-                                                                      0.01),
-
+                                                                  buildSizedBoxH(
+                                                                      size.height *
+                                                                          0.01),
                                                                   Padding(
-                                                                    padding: const EdgeInsets.only(right: 10),
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        right:
+                                                                            10),
                                                                     child: Text(
                                                                         '${controller.newTop[index]["title"]['userPreferred']}',
                                                                         maxLines:
                                                                             2,
-                                                                        overflow: TextOverflow.ellipsis,
+                                                                        overflow:
+                                                                            TextOverflow
+                                                                                .ellipsis,
                                                                         style:
                                                                             white16),
                                                                   )
@@ -331,17 +406,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 //   withNavBar: true,
                                                 //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
                                                 // );
-                                                context.pushNamed(Routes.seeAllName);
+                                                homeController
+                                                    .setScreenIndex(1);
+                                                context.pushNamed(
+                                                    Routes.seeAllName);
                                               },
                                               child: const Text(
                                                 AppString.seeAll,
-                                                style: lightYellow13,
+                                                style: pink13,
                                               ),
                                             ),
                                             buildSizedBoxW(size.width * 0.02),
                                             const Icon(
                                               Icons.arrow_forward_ios_outlined,
-                                              color: lightYellow,
+                                              color: pinkColor,
                                               size: 12,
                                             ),
                                           ],
@@ -369,7 +447,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         width:
                                                             size.width * 0.38,
                                                         child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
                                                           children: [
                                                             GestureDetector(
                                                               onTap: () {
@@ -385,7 +465,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 //   withNavBar: true, // OPTIONAL VALUE. True by default.
                                                                 //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
                                                                 // );
-                                                                context.pushNamed(Routes.animeDetailName,extra: controller.newUpcoming[index]);
+                                                                context.pushNamed(
+                                                                    Routes
+                                                                        .animeDetailName,
+                                                                    extra: controller
+                                                                            .newUpcoming[
+                                                                        index]);
                                                                 adsController
                                                                     .showAdd();
                                                                 // adsController
@@ -458,13 +543,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 ],
                                                               ),
                                                             ),
-
-                                                            buildSizedBoxH( size.height *
-                                                                0.01),
+                                                            buildSizedBoxH(
+                                                                size.height *
+                                                                    0.01),
                                                             Text(
                                                               '${controller.newUpcoming[index]["title"]['userPreferred']}',
                                                               maxLines: 2,
-                                                              overflow: TextOverflow.ellipsis,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                               style: white16,
                                                             ),
                                                           ],
@@ -496,19 +583,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 //   withNavBar: true, // OPTIONAL VALUE. True by default.
                                                 //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
                                                 // );
-                                                context.pushNamed(Routes.seeAllName);
+                                                context.pushNamed(
+                                                    Routes.seeAllName);
                                               },
                                               child: Row(
                                                 children: [
                                                   const Text(
                                                     AppString.seeAll,
-                                                    style: lightYellow13,
+                                                    style: pink13,
                                                   ),
-                                                  buildSizedBoxW(size.width * 0.02),
+                                                  buildSizedBoxW(
+                                                      size.width * 0.02),
                                                   const Icon(
                                                     Icons
                                                         .arrow_forward_ios_outlined,
-                                                    color: lightYellow,
+                                                    color: pinkColor,
                                                     size: 12,
                                                   ),
                                                 ],
@@ -557,11 +646,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 //   withNavBar: true, // OPTIONAL VALUE. True by default.
                                                                 //   pageTransitionAnimation: PageTransitionAnimation.cupertino,
                                                                 // );
-                                                                context.pushNamed(Routes.animeDetailName,extra: favController.favData[index]);
+                                                                context.pushNamed(
+                                                                    Routes
+                                                                        .animeDetailName,
+                                                                    extra: favController
+                                                                            .favData[
+                                                                        index]);
                                                                 adsController
                                                                     .showAdd();
-                                                                    // adsController
-                                                                    //     .loadBannerAds();
+                                                                // adsController
+                                                                //     .loadBannerAds();
                                                               },
                                                               child: Stack(
                                                                 children: [
@@ -607,7 +701,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                           borderRadius:
                                                                               BorderRadius.circular(7)),
                                                                       child:
-                                                                           Row(
+                                                                          Row(
                                                                         mainAxisAlignment:
                                                                             MainAxisAlignment.center,
                                                                         children: [
@@ -630,12 +724,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 ],
                                                               ),
                                                             ),
-                                                            buildSizedBoxH( size.height *
-                                                                0.01),
+                                                            buildSizedBoxH(
+                                                                size.height *
+                                                                    0.01),
                                                             Text(
                                                               '${favController.favData[index]["title"]['userPreferred']}',
                                                               maxLines: 2,
-                                                              overflow: TextOverflow.ellipsis,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
                                                               style: white16,
                                                             ),
                                                           ],
@@ -646,7 +743,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 },
                                               ),
                                       ),
-                                      buildSizedBoxH(size.height*0.1),
+                                      buildSizedBoxH(size.height * 0.1),
                                     ],
                                   )
                                 : controller.searchData.isEmpty
@@ -656,24 +753,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                           style: whiteColor,
                                         ),
                                       )
-                                    :  CustomGrid(allData: controller.searchData,),
+                                    : CustomGrid(
+                                        allData: controller.searchData,
+                                      ),
                       ],
                     ),
                   ),
                 ),
                 GetBuilder<AdsController>(builder: (controller) {
-                  if (controller.bannerAd1 == null) {
+                  if (bannerAd1 == null) {
                     return const SizedBox();
                   } else {
                     return Align(
                       alignment: Alignment.bottomCenter,
                       child: Container(
                         alignment: Alignment.bottomCenter,
-                        padding: const EdgeInsets.only(top: 3,left: 8,right: 8),
-                        decoration: const BoxDecoration(color: black),
+                        padding:
+                            const EdgeInsets.only(top: 3, left: 8, right: 8),
+                        decoration: const BoxDecoration(color: backgroundColor),
                         width: size.width,
-                        height: size.height*0.10,
-                        child: AdWidget(ad: controller.bannerAd1!),
+                        height: size.height * 0.10,
+                        child: AdWidget(ad: bannerAd1!),
                       ),
                     );
                   }
@@ -686,7 +786,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-
-
-

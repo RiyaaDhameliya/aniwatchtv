@@ -158,7 +158,7 @@ class PrivacyPolicyBottomSheet extends StatelessWidget {
                 const Text(
                     'If you have any questions or suggestions about my PrivacyPolicy, do not hesitate to contact me at',
                     style: white16),
-                const Text('forgoodapps.10@gmail.com.', style: lightYellowColor),
+                const Text('forgoodapps.10@gmail.com.', style: pink),
                 buildSizedBoxH(20),
                 const Text(
                     'This privacy policy page was created at '
@@ -167,7 +167,7 @@ class PrivacyPolicyBottomSheet extends StatelessWidget {
                 const Text(
                   'App '
                   'Privacy Policy Generator',
-                  style: lightYellowColor,
+                  style: pink,
                 )
               ],
             ),
